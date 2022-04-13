@@ -1,6 +1,6 @@
 # DS5100 Project 2
 
-Group2:
+Group 2:
 - Cavan Ingram
 - Claire Gloss
 - Dominic Scerbo
