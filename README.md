@@ -16,4 +16,5 @@ Group 2:
 
 ## Notebooks / Scripts:
 **unittests.py** Tests units of source code / functions
+<br />
 **happiness_analysis_ds** Contains country level Choropleth visualization and model code
