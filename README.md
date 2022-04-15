@@ -14,3 +14,6 @@ Group 2:
 <br />
 **Outputs:** Outputs from the notebooks / scripts such as plots in jpeg and png format
 
+## Notebooks / Scripts:
+**unittests.py** Tests units of source code / functions
+**happiness_analysis_ds** Contains country level Choropleth visualization and model code
