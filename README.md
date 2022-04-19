@@ -18,5 +18,7 @@ Group 2:
 **unittests.py** Tests units of source code / functions
 <br />
 **happiness_analysis_ds** Contains country level Choropleth visualization and model code
+<br />
 **explored data_America** Contains data exploration for research question on America 
+<br />
 **project_data** Contains data cleaning and processing 
