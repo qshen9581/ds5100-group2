@@ -1,6 +1,6 @@
 # DS5100 Project 2
 
-Group 2:
+Group 2(Happyr):
 - Cavan Ingram
 - Claire Gloss
 - Dominic Scerbo
@@ -22,3 +22,5 @@ Group 2:
 **explored data_America** Contains data exploration for research question on America 
 <br />
 **project_data** Contains data cleaning and processing 
+<br />
+**HappinessPresentation.pdf** is the presentation PDF file 
