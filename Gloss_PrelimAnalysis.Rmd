@@ -1,0 +1,299 @@
+---
+title: "Preliminary Analysis of World Happiness"
+author: "Claire Gloss (cg4ey)"
+date: "4/8/2022"
+output: word_document
+---
+Data set: World Happiness Report
+\
+Question in mind: Best and Worst Countries/Regions to Live
+```{r echo=F, message=F, warnings=F}
+##load the data frame and the packages required for the code
+df<-read.csv("data_all.csv", header=T)
+#names(df) #check names of columns
+library(tidyverse)
+library(ggplot2)
+#install.packages("writexl")
+library(writexl)
+library(testthat)
+```
+Many variables in this data set are a proportion of contribution to the happiness ranking. So, the only variable that will be indicative of the best or worst places to live will be the happiness score. 
+\
+\
+Let's look at the happiness scores for each year individually and rank the top five and bottom five countries.
+\
+```{r echo=F}
+##Create a function for the below code so that can meet the unit test requirement
+df_yr<- function(year){
+  if(year %in% seq(2015,2022,1)){
+  df%>%
+    filter(Year==year)%>%
+    arrange(desc(Happiness.Score))    
+  }
+  else{
+    stop("year not in data set. ",.call=F)
+  }
+
+}
+
+df2015<-df_yr(2015)
+df2016<-df_yr(2016)
+df2017<-df_yr(2017)
+df2018<-df_yr(2018)
+df2019<-df_yr(2019)
+df2020<-df_yr(2020)
+df2021<-df_yr(2021)
+df2022<-df_yr(2022)
+
+##Test that the function found data frame matches a manually found data frame
+df2015_expected<-df%>%
+  filter(Year==2015)%>%
+  arrange(desc(Happiness.Score))
+
+test_that("DF Correctness", expect_equal(df2015,df2015_expected))
+
+##Test that the function gives an error when the year entered is not in the data frame
+for(x in seq(2010,2030,1)){
+  if(x %in% seq(2015,2022,1)){
+    
+  }
+  else{
+    test_that("DF Year",expect_error(df_yr(x)))
+  }
+}
+
+```
+
+```{r echo=F}
+##DONT NEED TO RUN THIS CODE ANYMORE BECAUSE OF FUNCTION
+
+##separate the data frame by year
+df2015<-df%>%
+  filter(Year==2015)%>%
+  arrange(desc(Happiness.Score))
+df2016<-df%>%
+  filter(Year==2016)%>%
+  arrange(desc(Happiness.Score))
+df2017<-df%>%
+  filter(Year==2017)%>%
+  arrange(desc(Happiness.Score))
+df2018<-df%>%
+  filter(Year==2018)%>%
+  arrange(desc(Happiness.Score))
+df2019<-df%>%
+  filter(Year==2019)%>%
+  arrange(desc(Happiness.Score))
+df2020<-df%>%
+  filter(Year==2020)%>%
+  arrange(desc(Happiness.Score))
+df2021<-df%>%
+  filter(Year==2021)%>%
+  arrange(desc(Happiness.Score))
+df2022<-df%>%
+  filter(Year==2022)%>%
+  arrange(desc(Happiness.Score))
+```
+```{r echo=F}
+##Top and Bottom 5 countries
+BW2015<-rbind(head(df2015['Country'],5),tail(df2015['Country'],5))
+BW2016<-rbind(head(df2016['Country'],5),tail(df2016['Country'],5))
+BW2017<-rbind(head(df2017['Country'],5),tail(df2017['Country'],5))
+BW2018<-rbind(head(df2018['Country'],5),tail(df2018['Country'],5))
+BW2019<-rbind(head(df2019['Country'],5),tail(df2019['Country'],5))
+BW2020<-rbind(head(df2020['Country'],5),tail(df2020['Country'],5))
+BW2021<-rbind(head(df2021['Country'],5),tail(df2021['Country'],5))
+BW2022<-rbind(head(df2022['Country'],5),tail(df2022['Country'],5))
+
+##rename so we can combine into one data frame
+names(BW2015)[1]<-'2015'
+names(BW2016)[1]<-'2016'
+names(BW2017)[1]<-'2017'
+names(BW2018)[1]<-'2018'
+names(BW2019)[1]<-'2019'
+names(BW2020)[1]<-'2020'
+names(BW2021)[1]<-'2021'
+names(BW2022)[1]<-'2022'
+
+##re-index so we can combine into one data frame and so it is logical
+new_index<-c(1,2,3,4,5,-5,-4,-3,-2,-1)
+rownames(BW2015)<-new_index
+rownames(BW2016)<-new_index
+rownames(BW2017)<-new_index
+rownames(BW2018)<-new_index
+rownames(BW2019)<-new_index
+rownames(BW2020)<-new_index
+rownames(BW2021)<-new_index
+rownames(BW2022)<-new_index
+
+##combine data frames to show top and worst countries across the years
+BW<-data.frame(BW2015[1],BW2016[1],BW2017[1],BW2018[1],BW2019[1],BW2020[1],BW2021[1],BW2022[1])
+names(BW)<- c('2015','2016','2017','2018','2019','2020','2021','2022')
+print(BW)
+
+```
+\
+\
+The above charts shows that there are a lot of repeat countries across the years, so now we want to look now at the average scores across the years and see which countries have the happiest and least happy residents overall. 
+\
+```{r echo=F}
+##create list of the countries in the data frame and find the average happiness scores for each
+countries<-unique(df$Country)
+scores<-c()
+for (x in countries) {
+  new_df<-df%>%
+    filter(Country==x)
+  mean<-mean(new_df$Happiness.Score,na.rm=T)
+  scores<-c(scores,mean)
+}
+
+```
+```{r echo=F}
+##put into new data frame and rank the countries by the happiness score
+df_avg<-data.frame(countries, scores)
+df_avg<-df_avg%>%
+  arrange(desc(scores))
+
+##show top and bottom 5 countries and re-index for logical sense
+BW_avg<-rbind(head(df_avg,5),tail(df_avg,5))
+rownames(BW_avg)<-new_index #same index as before
+print(BW_avg[1])
+```
+\
+I am curious to see just how much more happy each country is than one another, so let's look at a plot to see the deltas.
+\
+```{r echo=F, warning=F}
+par(mrow=c(1,2))
+ggplot(data=head(BW_avg,5),aes(x=countries, y=scores))+
+  geom_point()+
+  labs(x='Country', y='Happiness Score', title='Happiest Countries')
+ggplot(data=tail(BW_avg,5),aes(x=countries, y=scores))+
+  geom_point()+
+  labs(x='Country', y='Happiness Score', title='Least Happy Countries')
+par(mrow=c(1,1))
+```
+\
+These plots indicate that Finnish and Danish people are significantly happier than the other "happiest" people, and Afghans and Central Africans are significantly less happy than the other "least happy" people. For a better understanding of these differences, let's look at the percent differences in the happiness scores across these countries. 
+\
+```{r echo=F}
+##Figure the percent difference between the happiest/least happy countries and the average happiness of all countries
+mean_score<-mean(df_avg$scores) #do median because the mean is so low - must be weighted low
+BW_avg<-BW_avg%>%
+  mutate(delta_to_med=round(((scores/mean_score)),4))
+print(BW_avg[c(1,3)])
+
+```
+\
+The above chart shows that Finnish people are 42.46% happier than other people and Afghans are 41.63% less happy than other people. 
+\
+\
+Now, let's compare each country to the average score for the five "happiest" countries and average score for the five "least happy" countries.
+\
+```{r echo=F}
+#Identify mean scores for the happiest nations and mean scores for the least happy nations
+mean_happy<-mean(head(BW_avg,5)$scores)
+mean_sad<-mean(tail(BW_avg,5)$scores)
+
+#find the percent differences 
+BW_avg<-BW_avg%>%
+  mutate(delta_to_happy=round((scores/mean_happy),4))%>%
+  mutate(delta_to_sad=round((scores/mean_sad),4))
+print(BW_avg[c(1,4,5)])
+
+```
+\
+The above chart shows that Finnish people are 1.22% happier than the rest of the "happiest" people and that Afghans are 58.53% less happy than the "happiest" people. We can also see that Finnish people are 136.69% happier than the "least happy" people and Afghans are 3.03% less happy than the "least happy" people. 
+\
+\
+Let's now explore the average happiness ratings across the years by region of the globe instead of by country. 
+\
+\
+```{r echo=F}
+##create list of the regions in the data frame and find the average happiness scores for each
+regions<-unique(df$Region)
+scores2<-c()
+for (x in regions) {
+  new_df2<-df%>%
+    filter(Region==x)
+  mean2<-mean(new_df2$Happiness.Score,na.rm=T)
+  scores2<-c(scores2,mean2)
+}
+
+```
+```{r echo=F}
+##put into new data frame and rank the regions by the happiness score
+df_avg2<-data.frame(regions, scores2)
+df_avg2<-df_avg2%>%
+  arrange(desc(scores2))
+
+##show top and bottom 4 regions and re-index for logical sense
+BW_reg_avg<-rbind(head(df_avg2,4),tail(df_avg2,4))
+rownames(BW_reg_avg)<-c(1,2,3,4,-4,-3,-2,-1)
+print(BW_reg_avg[1])
+```
+\
+\
+Surprisingly, this does not list Western Europe, which is home to the five happiest countries, as number one on our list of "happiest" regions. This implies that the rest of Western Europe is not as "happy" as these countries. Perhaps Western Europe should have been separated out into Northern and Western Europe.
+It is not surprising that Sub-Saharan Africa is listed as the "least happy" region, since it is home to four of the "least happy" countries. 
+\
+\
+We can now look at a plot to visualize the difference in scores across these regions. 
+\
+```{r echo=F, warning=F}
+par(mrow=c(1,2))
+ggplot(data=head(BW_reg_avg,4),aes(x=regions, y=scores2))+
+  geom_point()+
+  labs(x='Region', y='Happiness Score', title='Happiest Regions')
+ggplot(data=tail(BW_reg_avg,4),aes(x=regions, y=scores2))+
+  geom_point()+
+  labs(x='Region', y='Happiness Score', title='Least Happy Regions')
+par(mrow=c(1,1))
+```
+\
+In the above plots, it shows that Austaliza and New Zealand and North America are significantly "happier" than the other "happiest" regions. Similarly, the Middle East and North Africa seems to be significantly "happier" than the other "least happy" regions.
+\
+\
+Now, let's look at the deltas for the regions, as we did for the individual countries.
+\
+\
+```{r echo=F}
+##Figure the percent difference between the happiest/least happy regions and the average happiness of all regions
+mean_score2<-mean(df_avg2$scores2) #again do median
+BW_reg_avg<-BW_reg_avg%>%
+  mutate(delta_to_med2=round((scores2/mean_score2),4))
+print(BW_reg_avg[c(1,3)])
+```
+\
+The above chart shows that Australia and New Zealand are 28.39% happier than other regions of the world and Sub-Saharan Africa is 24.17% less happy than other regions. 
+\
+\
+Let us also compare each region to the average score for the four "happiest" regions and average score for the four "least happy" regions.
+\
+```{r echo=F}
+#Identify mean scores for the happiest regions and mean scores for the least happy regions
+mean_happy2<-mean(head(BW_reg_avg,4)$scores2)
+mean_sad2<-mean(tail(BW_reg_avg,4)$scores2)
+
+#find the percent differences 
+BW_reg_avg<-BW_reg_avg%>%
+  mutate(delta_to_happy2=round((scores2/mean_happy2),4)) %>%
+  mutate(delta_to_sad2=round((scores2/mean_sad2),4))
+print(BW_reg_avg[c(1,4,5)])
+
+```
+\
+The above chart shows that Australia and New Zealand are 3.81% happier than the "happiest" regions and Sub-Saharan Africa is 38.69% less happy than the "happiest" regions. We can also see that Australia and New Zealand are 57.29% happier than the "least happy" regions and Sub-Saharan Africa is 7.10% less happy than the "least happy" regions. 
+\
+\
+We can conclude from this analysis that to be in the "happiest" region, it does not necessarily mean one is in the "happiest" nation. The same can be said for the "least happy" region and nation. 
+```{r}
+##export data frames to excel so can make pretty charts
+write_xlsx(x=list(By_Year=BW, Country_Deltas=BW_avg, Region_Deltas=BW_reg_avg), path="C:/Users/ddd/Documents/UVA/MSDS/Spring 2022/DS5100 Project/Raw_Charts.xlsx")
+
+```
+```{r}
+mean(df_avg$scores)
+mean(df_avg2$scores2)
+median(df_avg$scores)
+median(df_avg2$scores2)
+```
+
