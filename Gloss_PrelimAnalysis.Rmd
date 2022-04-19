@@ -7,12 +7,15 @@ output: word_document
 Data set: World Happiness Report
 \
 Question in mind: Best and Worst Countries/Regions to Live
-```{r echo=F, message=F}
+```{r echo=F, message=F, warnings=F}
 ##load the data frame and the packages required for the code
 df<-read.csv("data_all.csv", header=T)
 #names(df) #check names of columns
 library(tidyverse)
 library(ggplot2)
+#install.packages("writexl")
+library(writexl)
+library(testthat)
 ```
 Many variables in this data set are a proportion of contribution to the happiness ranking. So, the only variable that will be indicative of the best or worst places to live will be the happiness score. 
 \
@@ -20,6 +23,50 @@ Many variables in this data set are a proportion of contribution to the happines
 Let's look at the happiness scores for each year individually and rank the top five and bottom five countries.
 \
 ```{r echo=F}
+##Create a function for the below code so that can meet the unit test requirement
+df_yr<- function(year){
+  if(year %in% seq(2015,2022,1)){
+  df%>%
+    filter(Year==year)%>%
+    arrange(desc(Happiness.Score))    
+  }
+  else{
+    stop("year not in data set. ",.call=F)
+  }
+
+}
+
+df2015<-df_yr(2015)
+df2016<-df_yr(2016)
+df2017<-df_yr(2017)
+df2018<-df_yr(2018)
+df2019<-df_yr(2019)
+df2020<-df_yr(2020)
+df2021<-df_yr(2021)
+df2022<-df_yr(2022)
+
+##Test that the function found data frame matches a manually found data frame
+df2015_expected<-df%>%
+  filter(Year==2015)%>%
+  arrange(desc(Happiness.Score))
+
+test_that("DF Correctness", expect_equal(df2015,df2015_expected))
+
+##Test that the function gives an error when the year entered is not in the data frame
+for(x in seq(2010,2030,1)){
+  if(x %in% seq(2015,2022,1)){
+    
+  }
+  else{
+    test_that("DF Year",expect_error(df_yr(x)))
+  }
+}
+
+```
+
+```{r echo=F}
+##DONT NEED TO RUN THIS CODE ANYMORE BECAUSE OF FUNCTION
+
 ##separate the data frame by year
 df2015<-df%>%
   filter(Year==2015)%>%
@@ -129,9 +176,9 @@ These plots indicate that Finnish and Danish people are significantly happier th
 \
 ```{r echo=F}
 ##Figure the percent difference between the happiest/least happy countries and the average happiness of all countries
-mean_score<-mean(df_avg$scores)
+mean_score<-mean(df_avg$scores) #do median because the mean is so low - must be weighted low
 BW_avg<-BW_avg%>%
-  mutate(delta_to_mean=round(((scores/mean_score)-1)*100,2))
+  mutate(delta_to_med=round(((scores/mean_score)),4))
 print(BW_avg[c(1,3)])
 
 ```
@@ -148,8 +195,8 @@ mean_sad<-mean(tail(BW_avg,5)$scores)
 
 #find the percent differences 
 BW_avg<-BW_avg%>%
-  mutate(delta_to_happy=round(((scores/mean_happy)-1)*100,2))%>%
-  mutate(delta_to_sad=round(((scores/mean_sad)-1)*100,2))
+  mutate(delta_to_happy=round((scores/mean_happy),4))%>%
+  mutate(delta_to_sad=round((scores/mean_sad),4))
 print(BW_avg[c(1,4,5)])
 
 ```
@@ -210,9 +257,9 @@ Now, let's look at the deltas for the regions, as we did for the individual coun
 \
 ```{r echo=F}
 ##Figure the percent difference between the happiest/least happy regions and the average happiness of all regions
-mean_score2<-mean(df_avg2$scores2)
+mean_score2<-mean(df_avg2$scores2) #again do median
 BW_reg_avg<-BW_reg_avg%>%
-  mutate(delta_to_mean2=round(((scores2/mean_score2)-1)*100,2))
+  mutate(delta_to_med2=round((scores2/mean_score2),4))
 print(BW_reg_avg[c(1,3)])
 ```
 \
@@ -228,8 +275,8 @@ mean_sad2<-mean(tail(BW_reg_avg,4)$scores2)
 
 #find the percent differences 
 BW_reg_avg<-BW_reg_avg%>%
-  mutate(delta_to_happy2=round(((scores2/mean_happy2)-1)*100,2))%>%
-  mutate(delta_to_sad2=round(((scores2/mean_sad2)-1)*100,2))
+  mutate(delta_to_happy2=round((scores2/mean_happy2),4)) %>%
+  mutate(delta_to_sad2=round((scores2/mean_sad2),4))
 print(BW_reg_avg[c(1,4,5)])
 
 ```
@@ -238,3 +285,15 @@ The above chart shows that Australia and New Zealand are 3.81% happier than the 
 \
 \
 We can conclude from this analysis that to be in the "happiest" region, it does not necessarily mean one is in the "happiest" nation. The same can be said for the "least happy" region and nation. 
+```{r}
+##export data frames to excel so can make pretty charts
+write_xlsx(x=list(By_Year=BW, Country_Deltas=BW_avg, Region_Deltas=BW_reg_avg), path="C:/Users/ddd/Documents/UVA/MSDS/Spring 2022/DS5100 Project/Raw_Charts.xlsx")
+
+```
+```{r}
+mean(df_avg$scores)
+mean(df_avg2$scores2)
+median(df_avg$scores)
+median(df_avg2$scores2)
+```
+
