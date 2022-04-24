@@ -162,14 +162,11 @@ print(BW_avg[1])
 I am curious to see just how much more happy each country is than one another, so let's look at a plot to see the deltas.
 \
 ```{r echo=F, warning=F}
-par(mrow=c(1,2))
-ggplot(data=head(BW_avg,5),aes(x=countries, y=scores))+
+ggplot(data=BW_avg,aes(x=reorder(countries,-scores), y=scores))+
   geom_point()+
-  labs(x='Country', y='Happiness Score', title='Happiest Countries')
-ggplot(data=tail(BW_avg,5),aes(x=countries, y=scores))+
-  geom_point()+
-  labs(x='Country', y='Happiness Score', title='Least Happy Countries')
-par(mrow=c(1,1))
+  labs(x='Country', y='Happiness Score', title='Top and Bottom 5 Ranked Countries')+
+  theme(axis.text.x = element_text(angle = 10))
+
 ```
 \
 These plots indicate that Finnish and Danish people are significantly happier than the other "happiest" people, and Afghans and Central Africans are significantly less happy than the other "least happy" people. For a better understanding of these differences, let's look at the percent differences in the happiness scores across these countries. 
@@ -239,14 +236,11 @@ It is not surprising that Sub-Saharan Africa is listed as the "least happy" regi
 We can now look at a plot to visualize the difference in scores across these regions. 
 \
 ```{r echo=F, warning=F}
-par(mrow=c(1,2))
-ggplot(data=head(BW_reg_avg,4),aes(x=regions, y=scores2))+
+ggplot(data=BW_reg_avg,aes(x=reorder(regions,-scores2), y=scores2))+
   geom_point()+
-  labs(x='Region', y='Happiness Score', title='Happiest Regions')
-ggplot(data=tail(BW_reg_avg,4),aes(x=regions, y=scores2))+
-  geom_point()+
-  labs(x='Region', y='Happiness Score', title='Least Happy Regions')
-par(mrow=c(1,1))
+  labs(x='Region', y='Happiness Score', title='Top and Bottom 4 Ranked Regions')+
+  theme(axis.text.x = element_text(angle = 10))
+
 ```
 \
 In the above plots, it shows that Austaliza and New Zealand and North America are significantly "happier" than the other "happiest" regions. Similarly, the Middle East and North Africa seems to be significantly "happier" than the other "least happy" regions.
