@@ -28,3 +28,5 @@ Group 2(Happyr):
 **Happiness.pdf** is the draft of the report
 <br />
 **Year by Year Look at Happiness Scores.ipynb** This notebook contains an analysis of mean scores by year including bar chart visualizations for the data
+<br />
+**Gloss_PrelimAnalysis.Rmd** This markdown file contains code and analysis/visualizations of happiness rank by country and region. 
