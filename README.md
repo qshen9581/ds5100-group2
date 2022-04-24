@@ -15,9 +15,9 @@ Group 2(Happyr):
 **Outputs:** Outputs from the notebooks / scripts such as plots in jpeg and png format
 
 ## Notebooks / Scripts:
-**unittests.py** Tests units of source code / functions
+**happiness_analysis_ds.ipynb** This notebook contains a country level Choropleth plot visualization (including unittests for the preprocessing required to generate the plot) and the regression model.
 <br />
-**happiness_analysis_ds** Contains country level Choropleth visualization and model code
+**unittests.py** This script contains unit tests for the code utilized to generate the country level Choropleth plot visualization.
 <br />
 **explored data_America** Contains data exploration for research question on America 
 <br />
