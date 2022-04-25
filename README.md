@@ -30,3 +30,5 @@ Group 2(Happyr):
 **Year by Year Look at Happiness Scores.ipynb** This notebook contains an analysis of mean scores by year including bar chart visualizations for the data
 <br />
 **Gloss_PrelimAnalysis.Rmd** This markdown file contains code and analysis/visualizations of happiness rank by country and region. 
+<br />
+**variables_vs_happiness.py** This file contains code and analysis/visualizations of happiness against the individual variables.
