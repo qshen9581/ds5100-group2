@@ -19,16 +19,17 @@ Group 2(Happyr):
 <br />
 **unittests.py** This script contains unit tests for the code utilized to generate the country level Choropleth plot visualization.
 <br />
-**explored data_America** Contains data exploration for research question on America 
+**explored data_America.ipynb** Contains data exploration for research question on America 
 <br />
-**project_data** Contains data cleaning and processing 
-<br />
-**HappinessPresentation.pdf** is the presentation PDF file 
-<br />
-**Happiness.pdf** is the draft of the report
+**project_data.ipynb** Contains data cleaning and processing 
 <br />
 **Year by Year Look at Happiness Scores.ipynb** This notebook contains an analysis of mean scores by year including bar chart visualizations for the data
 <br />
 **Gloss_PrelimAnalysis.Rmd** This markdown file contains code and analysis/visualizations of happiness rank by country and region. 
 <br />
 **variables_vs_happiness.py** This file contains code and analysis/visualizations of happiness against the individual variables.
+
+## Report / Presentation
+**HappinessPresentation.pdf** is the presentation PDF file 
+<br />
+**Happiness.pdf** is the draft of the report
